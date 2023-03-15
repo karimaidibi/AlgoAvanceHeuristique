@@ -8,7 +8,7 @@ public class Instance {
     private boolean[][] plateau; //orientation: plateau[0][0] en haut à gauche, et plateau[ligne][col]
 
     //sortie du problème: une Solution (une solution est valide ssi c'est une liste de coordonées de taille au plus k+1, tel que deux coordonnées consécutives sont à distance 1,
-    // et les coordonnées ne sortent pas du plateau)
+    // et les coordonnées ne sortent pas du plateau, et que la solution démarre bien par le point de départ)
 
 
     private ArrayList<Coord> listeCoordPieces;// attribut supplémentaire (qui est certes redondant) qui contiendra la liste des coordonnées des pièces du plateau
@@ -202,10 +202,30 @@ public class Instance {
     public boolean estValide(Solution s) {
         //prérequis : s!=null, et les s.get(i) !=null pour tout i (mais par contre s peut contenir n'importe quelle séquence de coordonnées)
         //retourne vrai ssi s est une solution valide (une solution est valide ssi c'est une liste de coordonnées de taille au plus k+1, telle que deux coordonnées consécutives sont à distance 1,
-        // et les coordonnées ne sortent pas du plateau)
+        // et les coordonnées ne sortent pas du plateau, et que la solution démarre bien par le point de départ)
 
-        //à compléter
-        return true;
+        if (s == null || s.size() > k + 1) { // Vérifie si la solution est null ou si la taille de la solution est supérieure à k + 1
+            return false;
+        }
+
+        if (!s.get(0).equals(startingP)) { // Vérifie si la première coordonnée est égale à la coordonnée de départ
+            return false;
+        }
+
+        for (int i = 1; i < s.size(); i++) { // Parcourt les coordonnées de la solution
+            Coord current = s.get(i);
+            Coord previous = s.get(i - 1);
+
+            // Vérifie si les coordonnées sont à l'intérieur du plateau
+            if (current.getL() < 0 || current.getL() >= getNbL() || current.getC() < 0 || current.getC() >= getNbC()) {
+                return false;
+            }
+
+            // Vérifie si les coordonnées consécutives sont à distance 1
+            return current.estADistanceUn(previous);
+        }
+
+        return true; // Si toutes les conditions sont remplies, retourne vrai
     }
 
 
@@ -213,9 +233,15 @@ public class Instance {
         //prerequis : s est valide (et donc !=null)
         //action : retourne le nombre de pièces ramassées par s (et ne doit pas modifier this ni s)
 
-        //à compléter
-
-        return 0;
+        int count = 0; // Initialise le compteur de pièces ramassées
+        if (s != null) { // Si il y'a une solution, parcourir ces coordonnées
+            for (Coord coord : s) { // Parcourt les coordonnées de la solution
+                if (piecePresente(coord)) { // Vérifie si une pièce est présente à cette coordonnée
+                    count++; // Incrémente le compteur de pièces ramassées
+                }
+            }
+        }
+        return count; // Retourne le nombre de pièces ramassées
     }
 
 
