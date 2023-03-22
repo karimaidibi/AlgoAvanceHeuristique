@@ -217,12 +217,14 @@ public class Instance {
             Coord previous = s.get(i - 1);
 
             // Vérifie si les coordonnées sont à l'intérieur du plateau
-            if (current.getL() < 0 || current.getL() >= getNbL() || current.getC() < 0 || current.getC() >= getNbC()) {
+            if (!current.estDansPlateau(this.plateau.length, this.plateau[0].length)) {
                 return false;
             }
 
             // Vérifie si les coordonnées consécutives sont à distance 1
-            return current.estADistanceUn(previous);
+            if (!current.estADistanceUn(previous)) {
+                return false;
+            }
         }
 
         return true; // Si toutes les conditions sont remplies, retourne vrai
@@ -284,7 +286,32 @@ public class Instance {
 
         //a compléter
 
-        return null;
+        ArrayList<Integer> permut = new ArrayList<>();
+        ArrayList<Coord> remainingPieces = new ArrayList<>(listeCoordPieces);
+
+        Coord currentPosition = startingP;
+
+        while (!remainingPieces.isEmpty()) {
+            double minDistance = Double.MAX_VALUE;
+            Coord closestPiece = null;
+            int closestPieceIndex = -1;
+
+            for (int i = 0; i < remainingPieces.size(); i++) {
+                Coord piece = remainingPieces.get(i);
+                double distance = currentPosition.distanceFrom(piece);
+                if (distance < minDistance) {
+                    minDistance = distance;
+                    closestPiece = piece;
+                    closestPieceIndex = i;
+                }
+            }
+
+            permut.add(listeCoordPieces.indexOf(closestPiece));
+            remainingPieces.remove(closestPieceIndex);
+            currentPosition = closestPiece;
+        }
+
+        return permut;
     }
 
 
