@@ -1,6 +1,4 @@
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Objects;
+import java.util.*;
 
 public class Instance {
     private Coord startingP; //point de départ
@@ -335,10 +333,106 @@ public class Instance {
 
         //a compléter
 
-        return null;
+        // Si la permutation est vide, retourne une solution vide
+        if (permut == null || permut.isEmpty()) {
+            return new Solution();
+        }
+        //nouvelle solution
+        ArrayList<Coord> solution = new Solution();
+        Coord currentPosition = this.startingP; // coordonnee de depart
+
+        int k = 0;
+        ArrayList<Integer> remainingPieces = new ArrayList<>(permut);
+        if(piecePresente(currentPosition)){
+            remainingPieces.add(0,-1);
+        }
+
+        while( (k<=this.getK()) && !(remainingPieces.isEmpty())){
+
+            double minDistance = Double.MAX_VALUE;
+            Coord closestPiece = null;
+            int closestPieceIndex = -1;
+
+            for(int i =0; i<remainingPieces.size(); i++){
+                int pieceIndexInListCoord = remainingPieces.get(i); // index de la piece
+                Coord piece = this.listeCoordPieces.get(pieceIndexInListCoord); // recuperer la piece
+                double distance = Double.MAX_VALUE;
+                // si start position nest pas sur une piece
+                if(currentPosition.getL() != piece.getL() | piece.getC() != currentPosition.getC()){
+                    distance = currentPosition.distanceFrom(piece); // chercher la distance
+                }
+                if (distance < minDistance) { // quand on trouve celle qui est le plus proche
+                    minDistance = distance;
+                    closestPiece = piece;
+                    closestPieceIndex = i;
+                }
+            }
+            // une fois la piece plus proche trouve
+            solution.add(currentPosition);
+            // si current position est une piece
+            if(piecePresente(currentPosition)){
+                if(remainingPieces.contains(-1)){
+                    remainingPieces.remove(-1);
+                }else{
+                    remainingPieces.remove(this.listeCoordPieces.indexOf(currentPosition));
+                }
+            }
+            // se deplacer un pas vers la plus proche piece
+            if(closestPiece!=null){
+                currentPosition = this.getNextStepTowards(currentPosition,closestPiece);
+            }
+            k = k + 1;
+        }
+        System.out.println(solution);
+        return (Solution) solution;
+    }
+
+    public Coord getNextStepTowards(Coord currentPosition, Coord closestPosition) {
+        int currentRow = currentPosition.getL();
+        int currentCol = currentPosition.getC();
+        int closestRow = closestPosition.getL();
+        int closestCol = closestPosition.getC();
+
+        int newRow = currentRow;
+        int newCol = currentCol;
+
+        if (currentRow < closestRow) {
+            newRow = currentRow + 1;
+        } else if (currentRow > closestRow) {
+            newRow = currentRow - 1;
+        } else if (currentCol < closestCol) {
+            newCol = currentCol + 1;
+        } else if (currentCol > closestCol) {
+            newCol = currentCol - 1;
+        }
+
+        return new Coord(newRow, newCol);
     }
 
 
+    private List<Coord> getValidNeighbors(Coord coord) {
+        List<Coord> neighbors = new ArrayList<>();
+        int[] rowMoves = {-1, 0, 1, 0};
+        int[] colMoves = {0, 1, 0, -1};
+
+        for (int i = 0; i < 4; i++) {
+            int newRow = coord.getL() + rowMoves[i];
+            int newCol = coord.getC() + colMoves[i];
+
+            if (isValid(newRow, newCol)) {
+                neighbors.add(new Coord(newRow, newCol));
+            }
+        }
+
+        return neighbors;
+    }
+
+    private boolean isValid(int row, int col) {
+        int numRows = plateau.length;
+        int numCols = plateau[0].length;
+
+        return row >= 0 && row < numRows && col >= 0 && col < numCols && plateau[row][col];
+    }
 
     /************************************************
      **** fin algo algo greedy                      ******

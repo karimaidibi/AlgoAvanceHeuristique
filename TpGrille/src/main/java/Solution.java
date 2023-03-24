@@ -11,5 +11,9 @@ public class Solution extends ArrayList<Coord> {
 
     }
 
+    public void addCoord(Coord c){
+        this.add(c);
+    }
+
 
 }
