@@ -410,7 +410,7 @@ public class Instance {
     }
 
 
-    private List<Coord> getValidNeighbors(Coord coord) {
+    List<Coord> getValidNeighbors(Coord coord) {
         List<Coord> neighbors = new ArrayList<>();
         int[] rowMoves = {-1, 0, 1, 0};
         int[] colMoves = {0, 1, 0, -1};
@@ -451,8 +451,34 @@ public class Instance {
         //(pour des exemples précis, cf les tests)
 
         //à compléter
+        int d0 = Integer.MAX_VALUE;
+        List<Integer> distances = new ArrayList<>();
 
+        for (Coord piece : this.getListeCoordPieces()) {
+            int distFromStart = this.startingP.distanceFrom(piece);
+            d0 = Math.min(d0, distFromStart);
 
-        return 0;
+            for (Coord otherPiece : this.getListeCoordPieces()) {
+                if (!piece.equals(otherPiece)) {
+                    int dist = piece.distanceFrom(otherPiece);
+                    distances.add(dist);
+                }
+            }
+        }
+
+        Collections.sort(distances);
+
+        int totalDistance = d0;
+        int piecesCollected = 1;
+        for (int distance : distances) {
+            totalDistance += distance;
+            if (totalDistance <= this.k) {
+                piecesCollected++;
+            } else {
+                break;
+            }
+        }
+
+        return piecesCollected;
     }
 }

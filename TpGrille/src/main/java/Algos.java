@@ -28,12 +28,65 @@ public class Algos {
         //Remarque : quand vous aurez codé la borneSup, pensez à l'utiliser dans cet algorithme pour ajouter un cas de base
 
         //à compléter
+        // Si c == 0, on peut retourner la solution égale au point de départ
+        if (id.c == 0) {
+            return new Solution(id.i.getStartingP());
+        }
 
-        return null;
+        // Utilisez la méthode borneSup pour vérifier si la solution est réalisable
+        int maxCoins = id.i.borneSup();
+        if (maxCoins < id.c) {
+            return null;
+        }
+
+        // Initialisez la solution initiale avec le point de départ
+        Solution currentSolution = new Solution(id.i.getStartingP());
+
+        // Appelez la fonction auxiliaire fpt pour explorer toutes les combinaisons possibles de déplacements
+        return fpt(id.i, id.c, id.i.getStartingP(), id.i.getK(), currentSolution, 0);
+
     }
 
+    public static Solution fpt(Instance i, int remainingCoins, Coord currentPos, int remainingSteps, Solution currentSolution, int currentCoins) {
+        if (remainingCoins <= currentCoins) {
+            return currentSolution;
+        }
 
+        if (remainingSteps == 0) {
+            return null;
+        }
 
+        int n = i.getNbL();
+        int m = i.getNbC();
+        Coord[] directions = new Coord[]{new Coord(-1, 0), new Coord(1, 0), new Coord(0, -1), new Coord(0, 1)};
+        Solution bestSolution = null;
+
+        for (Coord dir : directions) {
+            Coord newPos = new Coord(currentPos.getL() + dir.getL(), currentPos.getC() + dir.getC());
+            if (newPos.estDansPlateau(n, m)) {
+                Solution newSolution = cloneSolution(currentSolution);
+                newSolution.add(newPos);
+                int newCoins = currentCoins;
+                if (i.getListeCoordPieces().contains(newPos) && !currentSolution.contains(newPos)) {
+                    newCoins++;
+                }
+                Solution foundSolution = fpt(i, remainingCoins, newPos, remainingSteps - 1, newSolution, newCoins);
+                if (foundSolution != null && (bestSolution == null || foundSolution.size() > bestSolution.size())) {
+                    bestSolution = foundSolution;
+                }
+            }
+        }
+
+        return bestSolution;
+    }
+
+    public static Solution cloneSolution(Solution original) {
+        Solution clonedSolution = new Solution();
+        for (Coord coord : original) {
+            clonedSolution.addCoord(new Coord(coord));
+        }
+        return clonedSolution;
+    }
 
     public static Solution algoFPT1DP(InstanceDec id,  HashMap<InstanceDec,Solution> table) {
         //même spécification que algoFPT1, si ce n'est que
