@@ -368,7 +368,6 @@ public class Instance {
                 toutesPiecesRamasse = piecesRamasse.containsAll(permut);
             }
         }
-        System.out.println(solution);
         return (Solution) solution;
     }
 
