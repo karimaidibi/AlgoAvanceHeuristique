@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Objects;
 
 public class ElemPermutHC implements IElemHC {
@@ -43,7 +44,13 @@ public class ElemPermutHC implements IElemHC {
         //- nbStepsTotal est le nombre de pas total qu'il faudrait pour ramasser toutes les pièces dans l'ordre de permut
 
         // à compléter
-     return 0;
+        int nbL = i.getNbL();
+        int nbC = i.getNbC();
+        int nbCases = nbL * nbC;
+        Solution sol = i.calculerSol(permut);
+        int valSol = i.evaluerSolution(sol);
+        int nbStepsTotal = i.nbStepsToCollectAll(permut);
+        return nbCases * valSol - nbStepsTotal;
     }
 
     public Solution getSol(){
@@ -62,8 +69,16 @@ public class ElemPermutHC implements IElemHC {
         //ne dois pas modifier this
 
         //à compléter
-
-        return null;
+        ArrayList<ElemPermutHC> voisins = new ArrayList<>();
+        for (int i = 0; i < permut.size(); i++) {
+            for (int j = i+1; j < permut.size(); j++) {
+                ArrayList<Integer> newPermut = new ArrayList<>(permut);
+                newPermut.remove(j);
+                newPermut.add(i, permut.get(j));
+                voisins.add(new ElemPermutHC(this.i, newPermut));
+            }
+        }
+        return voisins;
     }
 
 
@@ -74,7 +89,15 @@ public class ElemPermutHC implements IElemHC {
         //pour dist = 1, doit retourner getVoisinsImmediats();
 
         //à compléter
-      return null;
+        HashSet<ElemPermutHC> voisins = new HashSet<>(getVoisinsImmediats());
+        ArrayList<ElemPermutHC> result = new ArrayList<>(voisins);
+        for (int i = 1; i < dist; i++) {
+            ArrayList<ElemPermutHC> temp = new ArrayList<>(result);
+            for (ElemPermutHC elem : temp) {
+                result.addAll(elem.getVoisinsImmediats());
+            }
+        }
+        return result;
     }
 
 }

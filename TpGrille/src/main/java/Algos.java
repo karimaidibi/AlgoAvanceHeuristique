@@ -99,7 +99,22 @@ public class Algos {
 
 
         //à compléter
-        return null;
+        // Si l'instance est déjà résolue, on retourne la solution correspondante
+        if (table.containsKey(id)) {
+            return table.get(id);
+        }
+
+        // Sinon, on calcule la solution en faisant appel à la méthode auxiliaire ftp
+        int k = id.i.getK();
+        int c = id.c;
+        int n = id.i.getNbL();
+        int m = id.i.getNbC();
+
+        Solution sol = fpt(id.i, c, id.i.getStartingP(), k, new Solution(id.i.getStartingP()), 0);
+
+        // On ajoute la solution à la table et on la retourne
+        table.put(id, sol);
+        return sol;
     }
 
 
@@ -108,8 +123,8 @@ public class Algos {
         //doit faire appel à algoFPT1DP
 
         //à completer
-        return null;
-
+        HashMap<InstanceDec, Solution> table = new HashMap<>();
+        return algoFPT1DP(id, table);
     }
 
 

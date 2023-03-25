@@ -254,8 +254,15 @@ public class Instance {
         //retourne le nombre de pas qu'il faudrait pour ramasser toutes les pièces dans l'ordre de permut
 
         //à compléter
-
-        return 0;
+        int nbSteps = 0;
+        Coord currentPos = new Coord(getStartingP().getL(), getStartingP().getC());
+        for (int i = 0; i < permut.size(); i++) {
+            Coord piecePos = getListeCoordPieces().get(permut.get(i));
+            nbSteps += currentPos.distanceFrom(piecePos);
+            currentPos = piecePos;
+        }
+        nbSteps += currentPos.distanceFrom(getStartingP());
+        return nbSteps;
     }
 
     /************************************************
