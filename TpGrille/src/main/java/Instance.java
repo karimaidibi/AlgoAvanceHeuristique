@@ -261,7 +261,7 @@ public class Instance {
             nbSteps += currentPos.distanceFrom(piecePos);
             currentPos = piecePos;
         }
-        nbSteps += currentPos.distanceFrom(getStartingP());
+        //nbSteps += currentPos.distanceFrom(getStartingP());
         return nbSteps;
     }
 
@@ -344,51 +344,29 @@ public class Instance {
         if (permut == null || permut.isEmpty()) {
             return new Solution();
         }
+
         //nouvelle solution
         ArrayList<Coord> solution = new Solution();
-        Coord currentPosition = this.startingP; // coordonnee de depart
+        Coord currentPosition = this.startingP;
+        int k = 0; // nombre de pas
+        ArrayList<Integer> piecesRamasse = new ArrayList<>();
+        boolean toutesPiecesRamasse = false;
 
-        int k = 0;
-        ArrayList<Integer> remainingPieces = new ArrayList<>(permut);
-        if(piecePresente(currentPosition)){
-            remainingPieces.add(0,-1);
-        }
+        solution.add(currentPosition);
 
-        while( (k<=this.getK()) && !(remainingPieces.isEmpty())){
-
-            double minDistance = Double.MAX_VALUE;
-            Coord closestPiece = null;
-            int closestPieceIndex = -1;
-
-            for(int i =0; i<remainingPieces.size(); i++){
-                int pieceIndexInListCoord = remainingPieces.get(i); // index de la piece
-                Coord piece = this.listeCoordPieces.get(pieceIndexInListCoord); // recuperer la piece
-                double distance = Double.MAX_VALUE;
-                // si start position nest pas sur une piece
-                if(currentPosition.getL() != piece.getL() | piece.getC() != currentPosition.getC()){
-                    distance = currentPosition.distanceFrom(piece); // chercher la distance
-                }
-                if (distance < minDistance) { // quand on trouve celle qui est le plus proche
-                    minDistance = distance;
-                    closestPiece = piece;
-                    closestPieceIndex = i;
-                }
+        for(int i = 0; i<permut.size(); i++){
+            Coord piece = listeCoordPieces.get(permut.get(i));
+            Boolean sameCoordinate = (currentPosition.getL() == piece.getL()) && (currentPosition.getC() == piece.getC());
+            while( (k<this.getK()) && !toutesPiecesRamasse && sameCoordinate==false ){
+                currentPosition = this.getNextStepTowards(currentPosition, piece);
+                k++;
+                solution.add(currentPosition);
+                sameCoordinate = (currentPosition.getL() == piece.getL()) && (currentPosition.getC() == piece.getC());
             }
-            // une fois la piece plus proche trouve
-            solution.add(currentPosition);
-            // si current position est une piece
-            if(piecePresente(currentPosition)){
-                if(remainingPieces.contains(-1)){
-                    remainingPieces.remove(-1);
-                }else{
-                    remainingPieces.remove(this.listeCoordPieces.indexOf(currentPosition));
-                }
+            if(sameCoordinate){
+                piecesRamasse.add(listeCoordPieces.indexOf(piece));
+                toutesPiecesRamasse = piecesRamasse.containsAll(permut);
             }
-            // se deplacer un pas vers la plus proche piece
-            if(closestPiece!=null){
-                currentPosition = this.getNextStepTowards(currentPosition,closestPiece);
-            }
-            k = k + 1;
         }
         System.out.println(solution);
         return (Solution) solution;
