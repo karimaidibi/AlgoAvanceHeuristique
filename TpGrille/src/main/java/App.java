@@ -52,9 +52,9 @@ class App {
 
     Coord sp5 = new Coord(0, 0);
     int k5 = p5.length * p5[0].length / 10;
+    //System.out.println("in5 \n" + new Instance(p5, sp5, k5));
     return new Instance(p5, sp5, k5);
     }
-    //System.out.println("in5 \n" + in5);
     public static void main(String[] args) {
 
 
@@ -123,7 +123,7 @@ class App {
             p6[l6[i]][c6[i]] = true;
         }
         Coord sp6 = new Coord(13,8);
-        int k6 = 60;
+        int k6 = 11;
         Instance in6 = new Instance(p6,sp6,k6);
         int sg6 = in6.evaluerSolution(Algos.greedySolver(in6));
         int sfpt6 = in6.evaluerSolution(Algos.algoFPT1DPClient(new InstanceDec(in6,sg6+1)));

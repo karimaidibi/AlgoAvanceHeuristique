@@ -33,6 +33,15 @@ public class Algos {
             return new Solution(id.i.getStartingP());
         }
 
+        // Si K == 0, cad on ne peut pas bouger, retourner vrai si le nombre de piece a ramasser est 1 et que la position de depart contienr une piece
+        if(id.i.getK()==0){
+            if(id.c == 1 && id.i.piecePresente(id.i.getStartingP())){
+                return new Solution(id.i.getStartingP());
+            }else{
+                return null;
+            }
+        }
+
         // Utilisez la méthode borneSup pour vérifier si la solution est réalisable
         int maxCoins = id.i.borneSup();
         if (maxCoins < id.c) {
@@ -48,12 +57,23 @@ public class Algos {
     }
 
     public static Solution fpt(Instance i, int remainingCoins, Coord currentPos, int remainingSteps, Solution currentSolution, int currentCoins) {
+        // Si c == 0, on peut retourner la solution égale au point de départ
+        if(remainingCoins==0){
+            return new Solution(currentPos);
+        }
+
+        // si on a ramasse plus de piece que le nombre de piece a ramasser
         if (remainingCoins <= currentCoins) {
             return currentSolution;
         }
 
-        if (remainingSteps == 0) {
-            return null;
+        // Si K == 0, cad on ne peut pas bouger, retourner vrai si le nombre de piece a ramasser est 1 et que la position de depart contienr une piece
+        if(remainingSteps == 0){
+            if(remainingCoins == 1 && i.piecePresente(currentPos)){
+                return new Solution(currentPos);
+            }else{
+                return null;
+            }
         }
 
         int n = i.getNbL();
