@@ -71,10 +71,12 @@ public class ElemPermutHC implements IElemHC {
         //à compléter
         ArrayList<ElemPermutHC> voisins = new ArrayList<>();
         for (int i = 0; i < permut.size(); i++) {
+            for (int j = i+1; j < permut.size(); j++) {
                 ArrayList<Integer> newPermut = new ArrayList<>(permut);
-                newPermut.remove(i);
-                newPermut.add(newPermut.size()-1,permut.get(i));
+                newPermut.remove(j);
+                newPermut.add(i, permut.get(j));
                 voisins.add(new ElemPermutHC(this.i, newPermut));
+            }
         }
         return voisins;
     }
